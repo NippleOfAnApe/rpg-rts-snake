@@ -1,10 +1,10 @@
 /**********************************************************************************************
 *
-*   raylib - Koala Seasons game
+*   raylib - Advance Game template
 *
 *   Screens Functions Declarations (Init, Update, Draw, Unload)
 *
-*   Copyright (c) 2014-2016 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2014-2022 Ramon Santamaria (@raysan5)
 *
 *   This software is provided "as-is", without any express or implied warranty. In no event
 *   will the authors be held liable for any damages arising from the use of this software.
@@ -26,44 +26,20 @@
 #ifndef SCREENS_H
 #define SCREENS_H
 
-#define GAME_FPS           60.0
-#define TIME_FACTOR        60.0/GAME_FPS
-
-#define MAX_KILLS          128
-
+#define SCREEN_WIDTH    1280
+#define SCREEN_HEIGHT   720
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
-typedef enum GameScreen { LOGO, TITLE, OPTIONS, GAMEPLAY, ENDING } GameScreen;
+typedef enum GameScreen { LOGO = 0, TITLE, OPTIONS, GAMEPLAY, ENDING } GameScreen;
 
 //----------------------------------------------------------------------------------
 // Global Variables Declaration (shared by several modules)
 //----------------------------------------------------------------------------------
 extern GameScreen currentScreen;
 extern Font font;
-extern Shader colorBlend;
-extern Texture2D atlas01;
-extern Texture2D atlas02;
-extern Sound fxJump;
-extern Sound fxDash;
-extern Sound fxEatLeaves;
-extern Sound fxDieSnake;
-extern Sound fxDieDingo;
-extern Sound fxDieOwl;
-extern Sound fxHitResin;
-extern Sound fxWind;
-extern int score;
-extern int hiscore;
-extern int killHistory[MAX_KILLS];
-extern int killer;
-extern int seasons;
-extern int years;
-extern int currentLeaves;
-extern int currentSeason;
-extern int initSeason;
-extern int initYears;
-extern int rainChance;
-
+extern Music music;
+extern Sound fxCoin;
 
 #ifdef __cplusplus
 extern "C" {            // Prevents name mangling of functions

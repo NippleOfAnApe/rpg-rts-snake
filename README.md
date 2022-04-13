@@ -1,33 +1,60 @@
-# Simple and portable CMake template for raylib
+-----------------------------------
 
-This is a very basic project template for raylib using CMake and has been tested with Visual Studio, Visual Studio Code and CLion.
+_DISCLAIMER:_
 
-The raylib source code is included in the libs folder as it is much easier than including prebuilt binaries for every platform and configuration.
+Welcome to **raylib game template**!
 
-Building from the cmake file will build both raylib and `src/main.c` which includes a basic example of a raylib program.
+This template provides a base structure to start developing a small raylib game in plain C. The repo is also pre-configured with a default `LICENSE` (zlib/libpng) and a `README.md` (this one) to be properly filled by users. Feel free to change the LICENSE as required.
 
-The example in `src/main.c` uses an example image located in the `assets` folder.
+All the sections defined by `$(Data to Fill)` are expected to be edited and filled properly. It's recommended to delete this disclaimer message after editing this `README.md` file.
 
-The absolute path to the assets folder is defined by a macro `ASSETS_PATH` in the CMake file automatically which is useful during development. If you plan on releasing or sharing your game consider manually setting the value of the `ASSETS_PATH` macro.
+This template has been created to be used with raylib (www.raylib.com) and it's licensed under an unmodified zlib/libpng license.
 
-## How to use with C++
-To use with C++ simply rename `main.c` to `main.cpp` and then change the following lines in CMakelists.txt:
+_Copyright (c) 2014-2022 Ramon Santamaria ([@raysan5](https://twitter.com/raysan5))_
 
-From:
-```
-project(raylib_template C)
+-----------------------------------
 
-set(CMAKE_C_STANDARD 99)
+## $(Game Title)
 
-add_executable(raylib_template src/main.c)
-```
+![$(Game Title)](screenshots/screenshot000.png "$(Game Title)")
 
-To:
-```
-project(raylib_template CXX)
+### Description
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+$(Your Game Description)
 
-add_executable(raylib_template src/main.cpp)
-```
+### Features
+
+ - $(Game Feature 01)
+ - $(Game Feature 02)
+ - $(Game Feature 03)
+
+### Controls
+
+Keyboard:
+ - $(Game Control 01)
+ - $(Game Control 02)
+ - $(Game Control 03)
+
+### Screenshots
+
+_TODO: Show your game to the world, animated GIFs recommended!._
+
+### Developers
+
+ - $(Developer 01) - $(Role/Tasks Developed)
+ - $(Developer 02) - $(Role/Tasks Developed)
+ - $(Developer 03) - $(Role/Tasks Developed)
+
+### Links
+
+ - YouTube Gameplay: $(YouTube Link)
+ - itch.io Release: $(itch.io Game Page)
+ - Steam Release: $(Steam Game Page)
+
+### License
+
+This game sources are licensed under an unmodified zlib/libpng license, which is an OSI-certified, BSD-like license that allows static linking with closed source software. Check [LICENSE](LICENSE) for further details.
+
+$(Additional Licenses)
+
+*Copyright (c) $(Year) $(User Name) ($(User Twitter/GitHub Name))*
