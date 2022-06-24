@@ -23,17 +23,17 @@
 
 .PHONY: all clean
 
-# Define required raylib variables
-PROJECT_NAME       ?= raylib_examples
+# Define required variables
+PROJECT_NAME       ?= snake_game
 RAYLIB_VERSION     ?= 3.8.0
-RAYLIB_PATH        ?= ../raylib
+RAYLIB_PATH        ?= ../../raylib
 
 # Define default options
 
 # One of PLATFORM_DESKTOP, PLATFORM_RPI, PLATFORM_ANDROID, PLATFORM_WEB
 PLATFORM           ?= PLATFORM_DESKTOP
 
-# Locations of your newly installed library and associated headers. See ../src/Makefile
+# Locations of your newly installed library and associated headers.
 # On Linux, if you have installed raylib but cannot compile the examples, check that
 # the *_INSTALL_PATH values here are the same as those in src/Makefile or point to known locations.
 # To enable system-wide compile-time and runtime linking to libraylib.so, run ../src/$ sudo make install RAYLIB_LIBTYPE_SHARED.
@@ -41,10 +41,12 @@ PLATFORM           ?= PLATFORM_DESKTOP
 # To enable runtime linking to a special version of libraylib.so, see EXAMPLE_RUNTIME_PATH below.
 # If there is a libraylib in both EXAMPLE_RUNTIME_PATH and RAYLIB_INSTALL_PATH, at runtime,
 # the library at EXAMPLE_RUNTIME_PATH, if present, will take precedence over the one at RAYLIB_INSTALL_PATH.
-# RAYLIB_INSTALL_PATH should be the desired full path to libraylib. No relative paths.
-DESTDIR ?= /usr/local
-RAYLIB_INSTALL_PATH ?= $(DESTDIR)/lib
-# RAYLIB_H_INSTALL_PATH locates the installed raylib header and associated source files.
+
+# Desired full path to libraylib. No relative paths.
+DESTDIR               ?= /usr/local
+RAYLIB_INSTALL_PATH   ?= $(DESTDIR)/lib
+
+# raylib header and associated source files
 RAYLIB_H_INSTALL_PATH ?= $(DESTDIR)/include
 
 # Library type used for raylib: STATIC (.a) or SHARED (.so/.dll)
@@ -177,16 +179,16 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
     CC = emcc
 endif
 
-# Define default make program: Mingw32-make
-MAKE = mingw32-make
+# Define default make program
+MAKE    ?= make
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
-    ifeq ($(PLATFORM_OS),LINUX)
-        MAKE = make
+    ifeq ($(PLATFORM_OS),WINDOWS)
+        MAKE = mingw32-make
     endif
-    ifeq ($(PLATFORM_OS),OSX)
-        MAKE = make
-    endif
+endif
+ifeq ($(PLATFORM),PLATFORM_ANDROID)
+    MAKE = mingw32-make
 endif
 
 # Define compiler flags:
@@ -237,7 +239,7 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
     # -O2                        # optimization level 2, if used, also set --memory-init-file 0
     # -s USE_GLFW=3              # Use glfw3 library (context/input management)
     # -s ALLOW_MEMORY_GROWTH=1   # to allow memory resizing -> WARNING: Audio buffers could FAIL!
-    # -s TOTAL_MEMORY=16777216   # to specify heap memory size (default = 16MB)
+    # -s TOTAL_MEMORY=16777216   # to specify heap memory size (default = 16MB) (67108864 = 64MB)
     # -s USE_PTHREADS=1          # multithreading support
     # -s WASM=0                  # disable Web Assembly, emitted by default
     # -s ASYNCIFY                # lets synchronous C/C++ code interact with asynchronous JS
@@ -246,7 +248,8 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
     # --profiling                # include information for code profiling
     # --memory-init-file 0       # to avoid an external memory initialization code file (.mem)
     # --preload-file resources   # specify a resources folder for data compilation
-    CFLAGS += -s USE_GLFW=3
+    # --source-map-base          # allow debugging in browser with source map
+    CFLAGS += -s USE_GLFW=3 -s TOTAL_MEMORY=67108864 --preload-file resources
 
     # Define a custom shell .html and output extension
     CFLAGS += --shell-file $(RAYLIB_PATH)/src/shell.html
@@ -274,9 +277,7 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
         INCLUDE_PATHS += -I/usr/local/include
     endif
     ifeq ($(PLATFORM_OS),LINUX)
-        # Reset everything.
-        # Precedence: immediately local, installed version, raysan5 provided libs -I$(RAYLIB_H_INSTALL_PATH) -I$(RAYLIB_PATH)/release/include
-        INCLUDE_PATHS = -I$(RAYLIB_H_INSTALL_PATH) -I. -I$(RAYLIB_PATH)/src -I$(RAYLIB_PATH)/release/include -I$(RAYLIB_PATH)/src/external
+        INCLUDE_PATHS = -I$(RAYLIB_H_INSTALL_PATH) -I. -I$(RAYLIB_PATH)/src -I$(RAYLIB_PATH)/src/external
     endif
 endif
 
@@ -305,10 +306,6 @@ endif
 
 ifeq ($(PLATFORM),PLATFORM_RPI)
     LDFLAGS += -L/opt/vc/lib
-endif
-
-ifeq ($(PLATFORM),PLATFORM_DRM)
-    LDFLAGS += -lGLESv2 -lEGL -ldrm -lgbm
 endif
 
 # Define any libraries required on linking
@@ -374,19 +371,35 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
 endif
 
 # Define all source files required
-SAMPLES = snake
+PROJECT_SOURCE_FILES ?= \
+    game.c \
+    map.c
 
-# typing 'make' will invoke the default target entry
-all: $(SAMPLES)
+# Define all object files from source files
+OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
 
-# Generic compilation pattern
-# NOTE: Examples must be ready for Android compilation!
-%: %.c
+# For Android platform we call a custom Makefile.Android
 ifeq ($(PLATFORM),PLATFORM_ANDROID)
-	$(MAKE) -f Makefile.Android PROJECT_NAME=$@ PROJECT_SOURCE_FILES=$<
+    MAKEFILE_PARAMS = -f Makefile.Android 
+    export PROJECT_NAME
+    export PROJECT_SOURCE_FILES
 else
-	$(CC) -o $@$(EXT) $< $(CFLAGS) $(INCLUDE_PATHS) $(LDFLAGS) $(LDLIBS) -D$(PLATFORM)
+    MAKEFILE_PARAMS = $(PROJECT_NAME)
 endif
+
+# Default target entry
+# NOTE: We call this Makefile target or Makefile.Android target
+all:
+	$(MAKE) $(MAKEFILE_PARAMS)
+
+# Project target defined by PROJECT_NAME
+$(PROJECT_NAME): $(OBJS)
+	$(CC) -o $(PROJECT_NAME)$(EXT) $(OBJS) $(CFLAGS) $(INCLUDE_PATHS) $(LDFLAGS) $(LDLIBS) -D$(PLATFORM)
+
+# Compile source files
+# NOTE: This pattern will compile every module defined on $(OBJS)
+%.o: %.c
+	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
 
 # Clean everything
 clean:
