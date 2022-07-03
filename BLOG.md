@@ -16,6 +16,10 @@ ___
 <img src="resources/snake2.gif" alt="img" align="left" width="50%">
 + Smoother update timing
 + Circles insted of squares
++ Snakes follows mouse pointer
++ No cells
++ Different color body parts
++ Render from tail to head e.g. head will be on top
 ---
 ### **TODO**
 - [x]~~image bg outside the map~~
@@ -23,26 +27,27 @@ ___
 - different pickups:
     + [x]~~regular plus point~~
     + [x]~~bonus 10 point~~
-    + [x]~~4 items at once~~
+    + [x]~~many items at once~~
     + liited food (+ point, -tail)
     + bonus food to spawn in smaller area
     + make bonus food animated
     + boost resource collection or speed (changing screen tint)
-- fix th bug where after picking a fruit an increasing a snake size, body part is spawned at 0, 0
-- make a head differen color and on top of a body
+- [x]make a head differen color and on top of a body
+- [x]different color body parts
 - a dropoff location where you can cut your snake but get bonus points
 - add sfx & music
-- make walls and shoot points to burst them or nemies
-- ease the camera tracking
+- make walls and shoot points to burst them or enemies
 - [x]~~split project structure into different files + headers~~
-- add options to choose from 3-5 different snakeswith different speed and maybe later stats
+- add options to choose from 3-5 different snake swith different speed and maybe later stats
 - animations
 - textures for snake
-- [x]easings for snake tail
+- easings for snake tail and camera
 - ~~diagonal movement~~
 - ~~arrow on top of a player that will be registering move buttons and show the final directions where it will turn.~~
 - [x]get rid off cells
 - [x]circles instead of squares
 - [x]move snake with a mouse pointer
 - control moves with left/right, movement is constant
+- OR limit the turn angle
+- custom mouse pointer
 - make snake a dynamic array insted of static

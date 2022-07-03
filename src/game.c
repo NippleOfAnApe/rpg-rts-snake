@@ -37,7 +37,9 @@ static bool pause = false;
 
 static Snake snake[SNAKE_LENGTH] = { 0 };
 static Vector2 snakePosition[SNAKE_LENGTH] = { 0 };
-static float snakeSize = 20;
+static Color SnakeColorPatern1[] = { ORANGE, SKYBLUE, MAGENTA, LIME };
+
+static float snakeSizeRadius = 20;
 static Camera2D camera = { 0 };
 //static bool allowMove = false;
 static int counterTail = 0;
@@ -63,6 +65,7 @@ static void UpdateDrawFrame(void);  // Update and Draw (one frame)
 static void DrawUI(void);
 static void UpdateMovement(void);
 static void CollisionWithYourself(void);
+//static Color AssignSnakeColors(int i);  // recursive color assigning
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -124,11 +127,13 @@ void InitGame(void)
     for (int i = 0; i < SNAKE_LENGTH; i++)
     {
         snake[i].position = (Vector2){ screenWidth/2.0f, screenHeight/2.0f };
-        snake[i].size = snakeSize;
+        snake[i].size = snakeSizeRadius;
         snake[i].speed = (Vector2){ 0, 0 };
 
+        
         if (i == 0) snake[i].color = DARKBLUE;
-        else snake[i].color = BLUE;
+        //5 and for are hardcoded
+        else snake[i].color = SnakeColorPatern1[i / 5 % 4];     //every 5 circles are different colors
     }
 
     for (int i = 0; i < SNAKE_LENGTH; i++)
@@ -172,21 +177,6 @@ void UpdateGame()
                 }
                 else snake[i].position = snakePosition[i-1];
             }
-            // for (int i = 0; i < counterTail; i++) snakePosition[i] = snake[i].position;
-
-            // if ((framesCounter%speed) == 0)
-            // {
-            //     for (int i = 0; i < counterTail; i++)
-            //     {
-            //         if (i == 0)
-            //         {
-            //             snake[0].position.x += snake[0].speed.x;
-            //             snake[0].position.y += snake[0].speed.y;
-            //             allowMove = true;
-            //         }
-            //         else snake[i].position = snakePosition[i-1];
-            //     }
-            // }
 
             // Wall collision
             gameOver = CalcWallCollision(snake);
@@ -229,7 +219,7 @@ void DrawGame()
             DrawMap();
 
             // Draw snake
-            for (int i = 0; i < counterTail; i++) DrawCircleV(snake[i].position, snake[i].size, snake[i].color);
+            for (int i = counterTail - 1; i > 0; i--) DrawCircleV(snake[i].position, snake[i].size, snake[i].color);
         
             EndMode2D();
             DrawUI();   //UI on top of game elements
@@ -260,7 +250,6 @@ void DrawUI(void)
     DrawText(TextFormat("dxx: %.02f", dxSnake), 30, 60, 28, DARKPURPLE);
     DrawText(TextFormat("dyy: %.02f", dySnake), 30, 100, 28, DARKPURPLE);
     DrawText(TextFormat("mouse angle: %.02f", angleMouse), 500, 40, 28, DARKPURPLE);
-    DrawText(TextFormat("tan snake: %.02f", dxxSnake), 500, 70, 28, DARKPURPLE);
 }
 
 void UpdateMovement()
