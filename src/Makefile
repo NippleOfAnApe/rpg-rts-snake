@@ -373,7 +373,8 @@ endif
 # Define all source files required
 PROJECT_SOURCE_FILES ?= \
     game.c \
-    map.c
+    map.c \
+    snake.c
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))

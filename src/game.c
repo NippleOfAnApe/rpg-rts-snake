@@ -35,23 +35,9 @@ static int framesCounter = 0;
 static bool gameOver = false;
 static bool pause = false;
 
-static Snake snake[SNAKE_LENGTH] = { 0 };
-static Vector2 snakePosition[SNAKE_LENGTH] = { 0 };
-static Color SnakeColorPatern1[] = { ORANGE, SKYBLUE, MAGENTA, LIME };
-
-static float snakeSizeRadius = 20;
 static Camera2D camera = { 0 };
 //static bool allowMove = false;
-static int counterTail = 0;
-int score = 0;
-int snakeSpeed = 3;    //FREQUENCY
 //int speed = 3;  //5, 3 or 2; because %60    FRAME
-
-Vector2 screnPos = { 0 };
-Vector2 mousePos = { 0 };
-float angleMouse = 0.0f, angleSnake = 0.0f;
-float dx = 0.0f, dy = 0.0f, dxx = 0.0f, dyy = 0.0f;
-float dxSnake = 0.0f, dySnake = 0.0f, dxxSnake = 0.0f, dyySnake = 0.0f;
 
 
 //------------------------------------------------------------------------------------
@@ -63,8 +49,6 @@ static void DrawGame(void);         // Draw game (one frame)
 static void UnloadGame(void);       // Unload game
 static void UpdateDrawFrame(void);  // Update and Draw (one frame)
 static void DrawUI(void);
-static void UpdateMovement(void);
-static void CollisionWithYourself(void);
 //static Color AssignSnakeColors(int i);  // recursive color assigning
 
 //------------------------------------------------------------------------------------
@@ -89,7 +73,6 @@ int main(void)
     {
         // Update and Draw
         //----------------------------------------------------------------------------------
-        mousePos = GetMousePosition();
         UpdateDrawFrame();
         //----------------------------------------------------------------------------------
     }
@@ -110,49 +93,30 @@ int main(void)
 
 // Initialize game variables
 void InitGame(void)
-{
+{   
     framesCounter = 0;
     gameOver = false;
     pause = false;
 
-    counterTail = 2;
-    score = counterTail - 2;
     //allowMove = false;
 
-    camera.target = snake[0].position;
+    SetSnakeAsCameraTarget(&camera);
     camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
-
-    for (int i = 0; i < SNAKE_LENGTH; i++)
-    {
-        snake[i].position = (Vector2){ screenWidth/2.0f, screenHeight/2.0f };
-        snake[i].size = snakeSizeRadius;
-        snake[i].speed = (Vector2){ 0, 0 };
-
-        
-        if (i == 0) snake[i].color = DARKBLUE;
-        //5 and for are hardcoded
-        else snake[i].color = SnakeColorPatern1[i / 5 % 4];     //every 5 circles are different colors
-    }
-
-    for (int i = 0; i < SNAKE_LENGTH; i++)
-    {
-        snakePosition[i] = (Vector2){ 0.0f, 0.0f };
-    }
-
+    InitSnake();
     InitMap();
 }
 
 // Update and Draw (one frame)
-void UpdateDrawFrame()
+void UpdateDrawFrame(void)
 {
     UpdateGame();
     DrawGame();
 }
 
 // Update game (one frame)`LOGIC
-void UpdateGame()
+void UpdateGame(void)
 {
     if (!gameOver)
     {
@@ -161,37 +125,22 @@ void UpdateGame()
         if (!pause)
         {
             // Player controls
-            UpdateMovement();
+            UpdateMovement(&camera);
 
             // Snake movement
+            MoveSnake();
 
-            for (int i = 0; i < counterTail; i++)
-            {
-                snakePosition[i] = snake[i].position;
-
-                if (i == 0)
-                {
-                    snake[0].position.x += snake[0].speed.x;
-                    snake[0].position.y += snake[0].speed.y;
-                    //allowMove = true;
-                }
-                else snake[i].position = snakePosition[i-1];
-            }
-
-            // Wall collision
-            gameOver = CalcWallCollision(snake);
-
-            // Collision with yourself
-            CollisionWithYourself();
+            // Wall collision or Collision with self
+            gameOver = CalcWallCollision() || CalcSelfCollision();
 
             // Fruit position calculation
-            CalcFruitPos(snake, &counterTail);
+            CalcFruitPos();
 
             // Collision
-            CalcFruitCollision(snake, &counterTail, snakePosition, &score);
+            CalcFruitCollision();
             
             //Camera updater
-            UpdateCameraCenterInsideMap(&camera, snake, screenWidth, screenHeight);
+            UpdateCameraCenterInsideMap(&camera, screenWidth, screenHeight);
 
             framesCounter++;
         }
@@ -207,7 +156,7 @@ void UpdateGame()
 }
 
 // Draw game (one frame)
-void DrawGame()
+void DrawGame(void)
 {
     BeginDrawing();
 
@@ -219,7 +168,7 @@ void DrawGame()
             DrawMap();
 
             // Draw snake
-            for (int i = counterTail - 1; i > 0; i--) DrawCircleV(snake[i].position, snake[i].size, snake[i].color);
+            DrawSnake();
         
             EndMode2D();
             DrawUI();   //UI on top of game elements
@@ -247,68 +196,6 @@ void DrawUI(void)
         DrawText("GAME PAUSED", screenWidth/2 - MeasureText("GAME PAUSED", 40)/2, screenHeight/2 - 40, 40, GRAY);
     }
     DrawText(TextFormat("SCORE: %02i", score), 30, 30, 24, MAROON);
-    DrawText(TextFormat("dxx: %.02f", dxSnake), 30, 60, 28, DARKPURPLE);
-    DrawText(TextFormat("dyy: %.02f", dySnake), 30, 100, 28, DARKPURPLE);
-    DrawText(TextFormat("mouse angle: %.02f", angleMouse), 500, 40, 28, DARKPURPLE);
-}
-
-void UpdateMovement()
-{   
-    screnPos = GetScreenToWorld2D(mousePos, camera);
-    dx = screnPos.x - snake[0].position.x;
-    dy = screnPos.y - snake[0].position.y;
-    angleMouse = atan2f(dy, dx);       //cos = x(-1;1)     sin = y(-1;1)
-
-    dxSnake = snake[0].position.x - snake[1].position.x;
-    dySnake = snake[0].position.y - snake[1].position.y;
-    angleSnake = atan2f(dySnake, dxSnake);       //cos = x(-1;1)     sin = y(-1;1)
-
-    dxx = cosf(angleMouse);
-    dyy = sinf(angleMouse);
-    // dxxSnake = cosf(angleSnake);
-    // dyySnake = sinf(angleSnake);
-    
-
-    //Sets the direction. If top/down/left/right, then move straight
-    if (dxx >= .99f) snake[0].speed = (Vector2){snakeSpeed * 2, 0};
-    else if (dxx <= -.99f) snake[0].speed = (Vector2){-snakeSpeed * 2, 0};
-    else if (dyy >= .99f) snake[0].speed = (Vector2){0, snakeSpeed * 2};
-    else if (dyy <= -.99f) snake[0].speed = (Vector2){0, -snakeSpeed * 2};
-    else if (dxx > 0 && dyy > 0) snake[0].speed = (Vector2){snakeSpeed + snakeSpeed * dxx, snakeSpeed + snakeSpeed * dyy};
-    else if (dxx > 0 && dyy < 0) snake[0].speed = (Vector2){snakeSpeed + snakeSpeed * dxx, -snakeSpeed + snakeSpeed * dyy};
-    else if (dxx < 0 && dyy > 0) snake[0].speed = (Vector2){-snakeSpeed + snakeSpeed * dxx, snakeSpeed + snakeSpeed * dyy};
-    else snake[0].speed = (Vector2){-snakeSpeed + snakeSpeed * dxx, -snakeSpeed + snakeSpeed * dyy};
-
-
-    // if (IsKeyPressed(KEY_RIGHT) && (snake[0].speed.x == 0) && allowMove)
-    // {
-    //     snake[0].speed = (Vector2){ snakeSpeed, 0 };
-    //     allowMove = false;
-    // }
-    // if (IsKeyPressed(KEY_LEFT) && (snake[0].speed.x == 0) && allowMove)
-    // {
-    //     snake[0].speed = (Vector2){ -snakeSpeed, 0 };
-    //     allowMove = false;
-    // }
-    // if (IsKeyPressed(KEY_UP) && (snake[0].speed.y == 0) && allowMove)
-    // {
-    //     snake[0].speed = (Vector2){ 0, -snakeSpeed };
-    //     allowMove = false;
-    // }
-    // if (IsKeyPressed(KEY_DOWN) && (snake[0].speed.y == 0) && allowMove)
-    // {
-    //     snake[0].speed = (Vector2){ 0, snakeSpeed };
-    //     allowMove = false;
-    // }
-
-    if (IsKeyDown(KEY_Q)) camera.zoom += .01f;
-    if (IsKeyDown(KEY_E)) camera.zoom -= .01f;
-}
-
-void CollisionWithYourself(void)
-{
-    for (int i = 1; i < counterTail; i++)
-    {
-        if ((snake[0].position.x == snake[i].position.x) && (snake[0].position.y == snake[i].position.y)) gameOver = true;
-    }
+    DrawText(TextFormat("snake[0].speed.x: %.02f", snakeSpeedX), 30, 60, 28, DARKPURPLE);
+    DrawText(TextFormat("snake speed y: %.02f", snakeSpeedY), 30, 100, 28, DARKPURPLE);
 }
