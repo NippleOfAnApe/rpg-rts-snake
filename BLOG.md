@@ -32,6 +32,7 @@ ___
     + boost resource collection or speed (changing screen tint)
 - [x]~~make a head differen color and on top of a body~~
 - [x]~~different color body parts~~
+- [x]make a snake accelerate
 - a dropoff location where you can cut your snake but get bonus points
 - add sfx & music
 - make walls and shoot points to burst them or enemies

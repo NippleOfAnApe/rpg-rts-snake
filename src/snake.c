@@ -10,6 +10,9 @@
 static Snake snake[SNAKE_LENGTH] = { 0 };
 static Vector2 snakePosition[SNAKE_LENGTH] = { 0 };
 static Color SnakeColorPatern1[] = { ORANGE, SKYBLUE, MAGENTA, LIME };
+//Aceleration
+static Vector2 currentSpeed = { 0 };
+static bool accelerating;
 
 static float snakeSizeRadius = 20;
 int counterTail = 0;
@@ -44,6 +47,7 @@ void InitSnake(void)
 
     counterTail = 2;
     score = counterTail - 2;
+    accelerating = false;
 
     for (int i = 0; i < SNAKE_LENGTH; i++)
     {
@@ -89,6 +93,7 @@ void UpdateMovement(Camera2D *camera)
     // else if (dxx < 0 && dyy > 0) snake[0].speed = (Vector2){-snakeSpeed + snakeSpeed * dxx, snakeSpeed + snakeSpeed * dyy};
     // else snake[0].speed = (Vector2){-snakeSpeed + snakeSpeed * dxx, -snakeSpeed + snakeSpeed * dyy};
 
+    if (!accelerating) currentSpeed = snake[0].speed;
 
         /*Keyboard controlls*/
     if (IsKeyDown(KEY_RIGHT))
@@ -102,8 +107,21 @@ void UpdateMovement(Camera2D *camera)
     snakeSpeedX = snake[0].speed.x;
     snakeSpeedY = snake[0].speed.y;
 
+    //Camera zoom
     if (IsKeyDown(KEY_Q)) camera->zoom += .01f;
     if (IsKeyDown(KEY_E)) camera->zoom -= .01f;
+    
+    //Acceleration
+    if (IsKeyPressed(KEY_SPACE))
+    {
+        accelerating = true;
+        snake[0].speed = (Vector2){snake[0].speed.x * 2.0f , snake[0].speed.y * 2.0f};
+    }
+    if (IsKeyReleased(KEY_SPACE))
+    {
+        accelerating = false;
+        snake[0].speed = currentSpeed;
+    }
 }
 
 bool CalcWallCollision()

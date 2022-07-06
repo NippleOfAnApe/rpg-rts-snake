@@ -29,7 +29,6 @@ typedef struct Food {
     Texture2D* foodTexture;
     float size;
     bool active;
-    Color color;
     int points;
     int tailIncreaseSize;
     float lifetime;

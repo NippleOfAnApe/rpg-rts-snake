@@ -7,3 +7,5 @@ RPG Snake
 *Work in progress*
 
 Development process is being documented in [Blog](BLOG.md)
+
+### Icons from [Freepik](https://www.freepik.com/)
