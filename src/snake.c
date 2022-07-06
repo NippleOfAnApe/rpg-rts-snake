@@ -155,22 +155,22 @@ void CalcFruitCollision(void)
 {
     for (int i = 0; i < FOOD_ITEMS; i++)
     {
-        if (CheckCollisionCircles(snake[0].position, snake[0].size, GetFoodObject(i)->position, GetFoodObject(i)->size))
+        if (CheckCollisionCircles(snake[0].position, snake[0].size, fruits[i].position, fruits[i].size))
         {
-            if (GetFoodObject(i)->tailIncreaseSize >= 0)
+            if (fruits[i].tailIncreaseSize >= 0)
             {
-                for (short j = 0; j < GetFoodObject(i)->tailIncreaseSize; j++)
+                for (short j = 0; j < fruits[i].tailIncreaseSize; j++)
                 snake[counterTail + j].position = snakePosition[counterTail - 1];
             }
             else
             {
-                for (short j = 0; j < abs(GetFoodObject(i)->tailIncreaseSize); j++)
+                for (short j = 0; j < abs(fruits[i].tailIncreaseSize); j++)
                 snake[counterTail - j].position = snakePosition[counterTail - 1];
 
             }
-            counterTail += GetFoodObject(i)->tailIncreaseSize;
-            score += GetFoodObject(i)->points;
-            GetFoodObject(i)->active = false;
+            counterTail += fruits[i].tailIncreaseSize;
+            score += fruits[i].points;
+            fruits[i].active = false;
         }
     }
 }

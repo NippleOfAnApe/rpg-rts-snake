@@ -26,6 +26,7 @@ typedef struct Snake {
 
 typedef struct Food {
     Vector2 position;
+    Texture2D* foodTexture;
     float size;
     bool active;
     Color color;
@@ -40,13 +41,13 @@ typedef struct Food {
 extern int score;
 extern int counterTail;
 extern float snakeSpeedX, snakeSpeedY;
+extern Food fruits[FOOD_ITEMS];
 
 //----------------------------------------------------------------------------------
 // Map Functions Declaration
 //----------------------------------------------------------------------------------
 void InitMap(void);
 void CalcFruitPos();
-Food* GetFoodObject(int i);
 void DrawMap(void);
 void UnloadMap(void);
 

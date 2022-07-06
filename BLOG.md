@@ -27,8 +27,7 @@ ___
     + [x]~~regular plus point~~
     + [x]~~bonus 10 point~~
     + [x]~~many items at once~~
-    + liited food (+ point, -tail)
-    + bonus food to spawn in smaller area
+    + [x]liited food (+ point, -tail)
     + make bonus food animated
     + boost resource collection or speed (changing screen tint)
 - [x]~~make a head differen color and on top of a body~~
@@ -47,8 +46,8 @@ ___
 - [x]~~circles instead of squares~~
 - [x]~~move snake with a mouse pointer~~
 - [x]control moves with left/right, movement is constant
-- OR limit the turn angle
+- OR ~~limit the turn angle~~
 - custom mouse pointer
 - make snake a dynamic array insted of static
 - health system: if you are continiously colliding with a terrain or enemies, you start to shrink back and loose your health score and body mass, but not actual score. (more global damages will be presented later)
--if you spin in a circle, you gain the acceleration, after exiting it you gain a boost to your speed that decays
+- if you spin in a circle, you gain the acceleration, after exiting it you gain a boost to your speed that decays
