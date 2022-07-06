@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include "raymath.h"
 #include "mapObjects.h"
 
@@ -11,7 +12,7 @@ static Vector2 snakePosition[SNAKE_LENGTH] = { 0 };
 static Color SnakeColorPatern1[] = { ORANGE, SKYBLUE, MAGENTA, LIME };
 
 static float snakeSizeRadius = 20;
-static int counterTail = 0;
+int counterTail = 0;
 int snakeSpeed = 3;    //FREQUENCY
 //Global variables
 int score = 0;
@@ -50,9 +51,8 @@ void InitSnake(void)
         snake[i].size = snakeSizeRadius;
         snake[i].speed = (Vector2){ snakeSpeed, snakeSpeed };
 
-        if (i == 0) snake[i].color = DARKBLUE;
         //5 and 4 are hardcoded 5 - number of circles; 4 - number of elements in array
-        else snake[i].color = SnakeColorPatern1[i / 5 % 4];     //every 5 circles are different colors
+        snake[i].color = SnakeColorPatern1[i / 5 % 4];     //every 5 circles are different colors
     }
 
     for (int i = 0; i < SNAKE_LENGTH; i++)
@@ -157,8 +157,18 @@ void CalcFruitCollision(void)
     {
         if (CheckCollisionCircles(snake[0].position, snake[0].size, GetFoodObject(i)->position, GetFoodObject(i)->size))
         {
-            snake[counterTail].position = snakePosition[counterTail - 1];
-            counterTail += 5;
+            if (GetFoodObject(i)->tailIncreaseSize >= 0)
+            {
+                for (short j = 0; j < GetFoodObject(i)->tailIncreaseSize; j++)
+                snake[counterTail + j].position = snakePosition[counterTail - 1];
+            }
+            else
+            {
+                for (short j = 0; j < abs(GetFoodObject(i)->tailIncreaseSize); j++)
+                snake[counterTail - j].position = snakePosition[counterTail - 1];
+
+            }
+            counterTail += GetFoodObject(i)->tailIncreaseSize;
             score += GetFoodObject(i)->points;
             GetFoodObject(i)->active = false;
         }

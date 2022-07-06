@@ -1,9 +1,9 @@
 #ifndef MAP_H
 #define MAP_H
 
-#define SNAKE_LENGTH   256
+#define SNAKE_LENGTH   512
 //#define SQUARE_SIZE     25
-#define FOOD_ITEMS      10
+#define FOOD_ITEMS      50
 
 //----------------------------------------------------------------------------------
 // Configuration variables
@@ -30,6 +30,7 @@ typedef struct Food {
     bool active;
     Color color;
     int points;
+    int tailIncreaseSize;
     float lifetime;
 } Food;
 
@@ -37,6 +38,7 @@ typedef struct Food {
 // Global Variables Definition
 //----------------------------------------------------------------------------------
 extern int score;
+extern int counterTail;
 extern float snakeSpeedX, snakeSpeedY;
 
 //----------------------------------------------------------------------------------

@@ -50,3 +50,5 @@ ___
 - OR limit the turn angle
 - custom mouse pointer
 - make snake a dynamic array insted of static
+- health system: if you are continiously colliding with a terrain or enemies, you start to shrink back and loose your health score and body mass, but not actual score. (more global damages will be presented later)
+-if you spin in a circle, you gain the acceleration, after exiting it you gain a boost to your speed that decays

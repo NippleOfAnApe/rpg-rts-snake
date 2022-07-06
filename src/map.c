@@ -8,12 +8,18 @@ static Texture2D bgTexture = { 0 };
 static Texture2D fgTexture = { 0 };
 static Food fruits[FOOD_ITEMS] = { 0 };
 
+static float minusFoodLifetime = 8.0f;
 static float bonusFoodLifetime = 10.0f;
 static float regularFoodLifetime = 40.0f;
+static int minusFruitPoints = 50;
 static int bonusFruitPoints = 10;
 static int regularFruitPoints = 2;
+static float minusFruitSize = 15.0f;
 static float bonusFruitSize = 20.0f;
 static float regularFruitSize = 12.0f;
+static int minusFruitTailIncrease = -5;
+static int bonusFruitTailIncrease = 5;
+static int regularFruitTailIncrease = 1;
 static int theExtra = 0;    // extra space needed for drawing bg and fg
 
 //----------------------------------------------------------------------------------
@@ -37,13 +43,24 @@ void CalcFruitPos()
         {
             fruits[i].active = true;
             int randomValue = GetRandomValue(1, 20);
+            //MinusFruit
+            if (randomValue % 10 == 0)
+            {
+                fruits[i].size = minusFruitSize;
+                fruits[i].position = (Vector2){ GetRandomValue(fruits[i].size, mapWidth - fruits[i].size), GetRandomValue(fruits[i].size, (mapHeight - fruits[i].size) - 2)};
+                fruits[i].points = minusFruitPoints;
+                fruits[i].color = WHITE;
+                fruits[i].tailIncreaseSize = minusFruitTailIncrease;
+                fruits[i].lifetime = minusFoodLifetime;
+            }
             //Bonus fruit
-            if (randomValue % 10 == 0) 
+            else if (randomValue % 5 == 0) 
             {
                 fruits[i].size = bonusFruitSize;
                 fruits[i].position = (Vector2){ GetRandomValue(fruits[i].size, mapWidth - fruits[i].size), GetRandomValue(fruits[i].size, (mapHeight - fruits[i].size) - 2)};
                 fruits[i].points = bonusFruitPoints;
                 fruits[i].color = MAROON;
+                fruits[i].tailIncreaseSize = bonusFruitTailIncrease;
                 fruits[i].lifetime = bonusFoodLifetime;
             }
             //Main fruit
@@ -53,6 +70,7 @@ void CalcFruitPos()
                 fruits[i].position = (Vector2){ GetRandomValue(fruits[i].size, mapWidth - fruits[i].size), GetRandomValue(fruits[i].size, (mapHeight - fruits[i].size) - 2)};
                 fruits[i].points = regularFruitPoints;
                 fruits[i].color = YELLOW;
+                fruits[i].tailIncreaseSize = regularFruitTailIncrease;
                 fruits[i].lifetime = regularFoodLifetime;
             }
             
@@ -63,10 +81,10 @@ void CalcFruitPos()
         fruits[i].lifetime -= GetFrameTime();
     }
 }
-
+//  TODO make an extern
 Food* GetFoodObject(int i)
 {
-    return fruits + i;
+    return (fruits + i);
 }
 
 void DrawMap(void)
