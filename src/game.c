@@ -20,11 +20,6 @@
     #include <emscripten/emscripten.h>
 #endif
 
-//----------------------------------------------------------------------------------
-// Some Defines
-//----------------------------------------------------------------------------------
-
-
 //------------------------------------------------------------------------------------
 // Global Variables Declaration
 //------------------------------------------------------------------------------------
@@ -36,20 +31,6 @@ static bool gameOver = false;
 static bool pause = false;
 
 static Camera2D camera = { 0 };
-//static bool allowMove = false;
-//int speed = 3;  //5, 3 or 2; because %60    FRAME
-
-
-//------------------------------------------------------------------------------------
-// Module Functions Declaration (local)
-//------------------------------------------------------------------------------------
-static void InitGame(void);         // Initialize game
-static void UpdateGame(void);       // Update game (one frame)
-static void DrawGame(void);         // Draw game (one frame)
-static void UnloadGame(void);       // Unload game
-static void UpdateDrawFrame(void);  // Update and Draw (one frame)
-static void DrawUI(void);
-//static Color AssignSnakeColors(int i);  // recursive color assigning
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -97,8 +78,6 @@ void InitGame(void)
     framesCounter = 0;
     gameOver = false;
     pause = false;
-
-    //allowMove = false;
 
     SetSnakeAsCameraTarget(&camera);
     camera.offset = (Vector2){screenWidth / 2.0f, screenHeight / 2.0f };
@@ -178,13 +157,6 @@ void DrawGame(void)
     EndDrawing();
 }
 
-// Unload game variables
-void UnloadGame(void)
-{
-    // TODO: Unload all dynamic loaded data (textures, sounds, models...)
-    UnloadMap();
-}
-
 // Draws UI textboxes
 void DrawUI(void)
 {
@@ -199,4 +171,11 @@ void DrawUI(void)
     DrawText(TextFormat("TailCount: %d / %d", counterTail, SNAKE_LENGTH), 30, 400, 24, WHITE);
     DrawText(TextFormat("snake[0].speed.x: %.02f", snakeSpeedX), 30, 60, 28, DARKPURPLE);
     DrawText(TextFormat("snake speed y: %.02f", snakeSpeedY), 30, 100, 28, DARKPURPLE);
+}
+
+// Unload game variables
+void UnloadGame(void)
+{
+    // TODO: Unload all dynamic loaded data (textures, sounds, models...)
+    UnloadMap();
 }

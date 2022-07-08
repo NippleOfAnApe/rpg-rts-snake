@@ -1,18 +1,11 @@
 #ifndef MAP_H
 #define MAP_H
 
+//----------------------------------------------------------------------------------
+// Some Defines
+//----------------------------------------------------------------------------------
 #define SNAKE_LENGTH   512
-//#define SQUARE_SIZE     25
 #define FOOD_ITEMS      50
-
-//----------------------------------------------------------------------------------
-// Configuration variables
-//----------------------------------------------------------------------------------
-
-static const int mapWidth = 3000;
-static const int mapHeight = 1600;
-static int borderWidth = 40;  
-static int offMapSize = 110; //how many blocks to fit outside the map in the screen when near borders
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -40,15 +33,34 @@ typedef struct Food {
 extern int score;
 extern int counterTail;
 extern float snakeSpeedX, snakeSpeedY;
+
 extern Food fruits[FOOD_ITEMS];
+extern Snake snake[SNAKE_LENGTH];
+
+extern const int mapWidth;
+extern const int mapHeight;
+extern int borderWidth;
+extern int offMapSize;
+
+
+//------------------------------------------------------------------------------------
+// Main Functions Declaration
+//------------------------------------------------------------------------------------
+void InitGame(void);         // Initialize game
+void UpdateGame(void);       // Update game (one frame)
+void DrawGame(void);         // Draw game (one frame)
+void UnloadGame(void);       // Unload game
+void UpdateDrawFrame(void);  // Update and Draw (one frame)
+void DrawUI(void);
 
 //----------------------------------------------------------------------------------
 // Map Functions Declaration
 //----------------------------------------------------------------------------------
 void InitMap(void);
-void CalcFruitPos();
+void CalcFruitPos(void);
 void DrawMap(void);
 void UnloadMap(void);
+void UpdateCameraCenterInsideMap(Camera2D *camera, int screenWidth, int screenHeight);
 
 //----------------------------------------------------------------------------------
 // Snake Functions Declaration
@@ -62,6 +74,5 @@ void CalcFruitCollision(void);
 void DrawSnake(void);
 void MoveSnake(void);
 bool FruitIsOnSnake(Food fruit);
-void UpdateCameraCenterInsideMap(Camera2D *camera, int screenWidth, int screenHeight);
 
 #endif

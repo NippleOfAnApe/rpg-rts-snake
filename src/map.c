@@ -11,7 +11,14 @@ static Texture2D raspberryTexture = { 0 };
 static Texture2D pineapleTexture = { 0 };
 static Texture2D sushiTexture = { 0 };
 static Texture2D pizzaTexture = { 0 };
+
 Food fruits[FOOD_ITEMS] = { 0 };
+
+//Map dimensions
+const int mapWidth = 5000;
+const int mapHeight = 1000;
+int borderWidth = 40;
+int offMapSize = 110; //how many blocks to fit outside the map in the screen when near borders
 
 static float minusFoodLifetime = 8.0f;
 static float bonusFoodLifetime = 10.0f;
@@ -32,6 +39,8 @@ static int theExtra = 0;    // extra space needed for drawing bg and fg
 //----------------------------------------------------------------------------------
 void InitMap(void)
 {
+    // mapWidth = 5000;
+    // mapHeight = 3000;
     for (int i = 0; i < FOOD_ITEMS; i++) fruits[i].active = false;
 
     bgTexture = LoadTexture("../resources/dirtSIZE.png");
@@ -46,7 +55,7 @@ void InitMap(void)
     theExtra = borderWidth * 2 + offMapSize * 2;
 }
 
-void CalcFruitPos()
+void CalcFruitPos(void)
 {
     for (int i = 0; i < FOOD_ITEMS; i++)
     {
@@ -122,6 +131,27 @@ void DrawMap(void)
         DrawTextureEx(*fruits[i].foodTexture, (Vector2){fruits[i].position.x - 32 * fruits[i].scale, fruits[i].position.y - 32 * fruits[i].scale}, 0, fruits[i].scale, WHITE);
         DrawCircleLines(fruits[i].position.x, fruits[i].position.y, 32 * fruits[i].scale, RED);
     }
+}
+
+void UpdateCameraCenterInsideMap(Camera2D *camera, int screenWidth, int screenHeight)
+{
+    camera->target = snake[0].position;
+    camera->offset = (Vector2){ screenWidth/2.0f, screenHeight/2.0f };
+    float minX = -borderWidth - offMapSize;
+    float minY = -borderWidth - offMapSize;
+    float maxX = mapWidth + borderWidth + offMapSize;
+    float maxY = mapHeight + borderWidth + offMapSize;
+
+    Vector2 max = GetWorldToScreen2D((Vector2){ maxX, maxY }, *camera);
+    Vector2 min = GetWorldToScreen2D((Vector2){ minX, minY }, *camera);
+    
+    if (max.x < screenWidth) camera->offset.x = screenWidth - (max.x - screenWidth/2.0f);
+    if (max.y < screenHeight) camera->offset.y = screenHeight - (max.y - screenHeight/2.0f);
+    if (min.x > 0) camera->offset.x = screenWidth/2.0f - min.x;
+    if (min.y > 0) camera->offset.y = screenHeight/2.0f - min.y;
+
+    if (camera->zoom > 1.4f) camera->zoom = 1.4f;
+    if (camera->zoom < .7f) camera->zoom = .7f;
 }
 
 void UnloadMap(void)

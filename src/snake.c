@@ -5,29 +5,31 @@
 #include "mapObjects.h"
 
 //----------------------------------------------------------------------------------
+// Module Variables Definition (global)
+//----------------------------------------------------------------------------------
+Snake snake[SNAKE_LENGTH] = { 0 };
+int score = 0;
+float snakeSpeedX = 0, snakeSpeedY = 0;
+int counterTail = 0;
+//----------------------------------------------------------------------------------
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
-static Snake snake[SNAKE_LENGTH] = { 0 };
 static Vector2 snakePosition[SNAKE_LENGTH] = { 0 };
 static Color SnakeColorPatern1[] = { ORANGE, SKYBLUE, MAGENTA, LIME };
 //Aceleration
 static Vector2 currentSpeed = { 0 };
 static bool accelerating;
-
 static float snakeSizeRadius = 20;
-int counterTail = 0;
-int snakeSpeed = 3;
-//Global variables
-int score = 0;
-float snakeSpeedX = 0, snakeSpeedY = 0;
+static int snakeSpeed = 3;
+static int tailStartSize = 5;
 
 //Controlls
 //Keys
-float turnAngle = 8.0f;
-float cosAnglePositive = 0;
-float sinAnglePositive = 0;
-float cosAngleNegative = 0;
-float sinAngleNegative = 0;
+static float turnAngle = 8.0f;
+static float cosAnglePositive = 0;
+static float sinAnglePositive = 0;
+static float cosAngleNegative = 0;
+static float sinAngleNegative = 0;
 //Mouse
 // Vector2 screnPos = { 0 };
 // Vector2 mousePos = { 0 };
@@ -45,8 +47,8 @@ void InitSnake(void)
     cosAngleNegative = cosf(-turnAngle * DEG2RAD);
     sinAngleNegative = sinf(-turnAngle * DEG2RAD);
 
-    counterTail = 2;
-    score = counterTail - 2;
+    counterTail = tailStartSize;
+    score = counterTail - tailStartSize;
     accelerating = false;
 
     for (int i = 0; i < SNAKE_LENGTH; i++)
@@ -191,25 +193,4 @@ void CalcFruitCollision(void)
             fruits[i].active = false;
         }
     }
-}
-
-void UpdateCameraCenterInsideMap(Camera2D *camera, int screenWidth, int screenHeight)
-{
-    camera->target = snake[0].position;
-    camera->offset = (Vector2){ screenWidth/2.0f, screenHeight/2.0f };
-    float minX = -borderWidth - offMapSize;
-    float minY = -borderWidth - offMapSize;
-    float maxX = mapWidth + borderWidth + offMapSize;
-    float maxY = mapHeight + borderWidth + offMapSize;
-
-    Vector2 max = GetWorldToScreen2D((Vector2){ maxX, maxY }, *camera);
-    Vector2 min = GetWorldToScreen2D((Vector2){ minX, minY }, *camera);
-    
-    if (max.x < screenWidth) camera->offset.x = screenWidth - (max.x - screenWidth/2.0f);
-    if (max.y < screenHeight) camera->offset.y = screenHeight - (max.y - screenHeight/2.0f);
-    if (min.x > 0) camera->offset.x = screenWidth/2.0f - min.x;
-    if (min.y > 0) camera->offset.y = screenHeight/2.0f - min.y;
-
-    if (camera->zoom > 1.4f) camera->zoom = 1.4f;
-    if (camera->zoom < .7f) camera->zoom = .7f;
 }
