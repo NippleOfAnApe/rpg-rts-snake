@@ -19,9 +19,9 @@ static float regularFoodLifetime = 40.0f;
 static int minusFruitPoints = 50;
 static int bonusFruitPoints = 10;
 static int regularFruitPoints = 2;
-static float minusFruitSize = 15.0f;
-static float bonusFruitSize = 20.0f;
-static float regularFruitSize = 12.0f;
+static float minusFruitScale = .8f;
+static float bonusFruitScale = 1.2f;
+static float regularFruitScale = .6f;
 static int minusFruitTailIncrease = -5;
 static int bonusFruitTailIncrease = 5;
 static int regularFruitTailIncrease = 1;
@@ -58,9 +58,9 @@ void CalcFruitPos()
             //MinusFruit
             if (randomValue % 20 == 0)
             {
-                fruits[i].size = minusFruitSize;
+                fruits[i].scale = minusFruitScale;
                 fruits[i].foodTexture = &pizzaTexture;
-                fruits[i].position = (Vector2){ GetRandomValue(fruits[i].size, mapWidth - fruits[i].size), GetRandomValue(fruits[i].size, (mapHeight - fruits[i].size) - 2)};
+                fruits[i].position = (Vector2){ GetRandomValue(64, mapWidth - 64), GetRandomValue(64, (mapHeight - 64) - 2)};
                 fruits[i].points = minusFruitPoints;
                 fruits[i].tailIncreaseSize = minusFruitTailIncrease;
                 fruits[i].lifetime = minusFoodLifetime;
@@ -68,9 +68,9 @@ void CalcFruitPos()
             //Fast fruit
             else if (randomValue % 10 == 0) 
             {
-                fruits[i].size = regularFruitSize;
+                fruits[i].scale = .5f;
                 fruits[i].foodTexture = &sushiTexture;
-                fruits[i].position = (Vector2){ GetRandomValue(fruits[i].size, mapWidth - fruits[i].size), GetRandomValue(fruits[i].size, (mapHeight - fruits[i].size) - 2)};
+                fruits[i].position = (Vector2){ GetRandomValue(64, mapWidth - 64), GetRandomValue(64, (mapHeight - 64) - 2)};
                 fruits[i].points = bonusFruitPoints;
                 fruits[i].tailIncreaseSize = bonusFruitTailIncrease + 5;
                 fruits[i].lifetime = bonusFoodLifetime;
@@ -78,9 +78,9 @@ void CalcFruitPos()
             //Bonus fruit
             else if (randomValue % 5 == 0) 
             {
-                fruits[i].size = bonusFruitSize;
+                fruits[i].scale = bonusFruitScale;
                 fruits[i].foodTexture = &pineapleTexture;
-                fruits[i].position = (Vector2){ GetRandomValue(fruits[i].size, mapWidth - fruits[i].size), GetRandomValue(fruits[i].size, (mapHeight - fruits[i].size) - 2)};
+                fruits[i].position = (Vector2){ GetRandomValue(64, mapWidth - 64), GetRandomValue(64, (mapHeight - 64) - 2)};
                 fruits[i].points = bonusFruitPoints;
                 fruits[i].tailIncreaseSize = bonusFruitTailIncrease;
                 fruits[i].lifetime = bonusFoodLifetime;
@@ -88,49 +88,40 @@ void CalcFruitPos()
             //Main fruit
             else
             {
-                fruits[i].size = regularFruitSize;
+                fruits[i].scale = regularFruitScale;
                 fruits[i].foodTexture = &raspberryTexture;
-                fruits[i].position = (Vector2){ GetRandomValue(fruits[i].size, mapWidth - fruits[i].size), GetRandomValue(fruits[i].size, (mapHeight - fruits[i].size) - 2)};
+                fruits[i].position = (Vector2){ GetRandomValue(64, mapWidth - 64), GetRandomValue(64, (mapHeight - 64) - 2)};
                 fruits[i].points = regularFruitPoints;
-                //fruits[i].color = YELLOW;
                 fruits[i].tailIncreaseSize = regularFruitTailIncrease;
-                fruits[i].lifetime = regularFoodLifetime;
+                fruits[i].lifetime = regularFoodLifetime + regularFoodLifetime * GetRandomValue(-10, 10) / 20;
             }
             
             if (FruitIsOnSnake(fruits[i]))
-            fruits[i].position = (Vector2){ GetRandomValue(fruits[i].size, mapWidth - fruits[i].size), GetRandomValue(fruits[i].size, (mapHeight - fruits[i].size) - 2)};
+            fruits[i].position = (Vector2){ GetRandomValue(64, mapWidth - 64), GetRandomValue(64, (mapHeight - 64) - 2)};
             
         }
         fruits[i].lifetime -= GetFrameTime();
     }
-}
-//  TODO make an extern
-Food* GetFoodObject(int i)
-{
-    return (fruits + i);
 }
 
 void DrawMap(void)
 {
     // BG and FG
     DrawTextureTiled(bgTexture, (Rectangle){0.0f, 0.0f, 1920.0f, 1280.0f}, (Rectangle){-offMapSize - borderWidth, -offMapSize - borderWidth, mapWidth + theExtra, mapHeight + theExtra}, (Vector2){0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
-    DrawTextureTiled(fgTexture, (Rectangle){0.0f, 0.0f, 516.0f, 516.0f}, (Rectangle){0.0f, 0.0f, mapWidth, mapHeight}, (Vector2){0.0f, 0.0f}, 0.0f, 1.6f, WHITE);
+    DrawTextureTiled(fgTexture, (Rectangle){0.0f, 0.0f, 1024.0f, 1024.0f}, (Rectangle){0.0f, 0.0f, mapWidth, mapHeight}, (Vector2){0.0f, 0.0f}, 0.0f, 1.6f, WHITE);
 
     // Borders
     DrawTextureTiled(wallTexture, (Rectangle){0.0f, 0.0f, 480.0f, 480.0f}, (Rectangle){-borderWidth, -borderWidth, mapWidth + borderWidth, borderWidth}, (Vector2){0.0f, 0.0f}, 0.0f, .5f, WHITE);
     DrawTextureTiled(wallTexture, (Rectangle){0.0f, 0.0f, 480.0f, 480.0f}, (Rectangle){-borderWidth, 0, borderWidth, mapHeight}, (Vector2){0.0f, 0.0f}, 0.0f, .5f, WHITE);
     DrawTextureTiled(wallTexture, (Rectangle){0.0f, 0.0f, 480.0f, 480.0f}, (Rectangle){-borderWidth, mapHeight, mapWidth + borderWidth, borderWidth}, (Vector2){0.0f, 0.0f}, 0.0f, .5f, WHITE);
     DrawTextureTiled(wallTexture, (Rectangle){0.0f, 0.0f, 480.0f, 480.0f}, (Rectangle){mapWidth, -borderWidth, borderWidth, mapHeight + borderWidth * 2}, (Vector2){0.0f, 0.0f}, 0.0f, .5f, WHITE);
-    // DrawRectangle(-borderWidth, -borderWidth, mapWidth + borderWidth, borderWidth, DARKBROWN);    //TOP
-    // DrawRectangle(-borderWidth, 0, borderWidth, mapHeight, DARKBROWN);         //LEFT
-    // DrawRectangle(-borderWidth, mapHeight, mapWidth + borderWidth, borderWidth, DARKBROWN); //BOTTOM
-    // DrawRectangle(mapWidth, -borderWidth, borderWidth, mapHeight + borderWidth * 2, DARKBROWN);   //RIGHT
     
     // Draw fruit to pick
     for (int i = 0; i < FOOD_ITEMS; i++)
-    DrawTextureV(*fruits[i].foodTexture, (Vector2){fruits[i].position.x - 32, fruits[i].position.y - 32}, WHITE);
-    //DrawCircleV(fruits[i].position, fruits[i].size, fruits[i].color);
-
+    {
+        DrawTextureEx(*fruits[i].foodTexture, (Vector2){fruits[i].position.x - 32 * fruits[i].scale, fruits[i].position.y - 32 * fruits[i].scale}, 0, fruits[i].scale, WHITE);
+        DrawCircleLines(fruits[i].position.x, fruits[i].position.y, 32 * fruits[i].scale, RED);
+    }
 }
 
 void UnloadMap(void)

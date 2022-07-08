@@ -27,7 +27,7 @@ typedef struct Snake {
 typedef struct Food {
     Vector2 position;
     Texture2D* foodTexture;
-    float size;
+    float scale;
     bool active;
     int points;
     int tailIncreaseSize;

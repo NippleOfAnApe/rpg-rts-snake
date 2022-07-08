@@ -1,7 +1,7 @@
 #include <raylib.h>
+#include <raymath.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include "raymath.h"
 #include "mapObjects.h"
 
 //----------------------------------------------------------------------------------
@@ -16,7 +16,7 @@ static bool accelerating;
 
 static float snakeSizeRadius = 20;
 int counterTail = 0;
-int snakeSpeed = 3;    //FREQUENCY
+int snakeSpeed = 3;
 //Global variables
 int score = 0;
 float snakeSpeedX = 0, snakeSpeedY = 0;
@@ -96,11 +96,11 @@ void UpdateMovement(Camera2D *camera)
     if (!accelerating) currentSpeed = snake[0].speed;
 
         /*Keyboard controlls*/
-    if (IsKeyDown(KEY_RIGHT))
+    if (IsKeyDown(KEY_RIGHT) && !accelerating)
     {
         snake[0].speed = (Vector2){snake[0].speed.x * cosAnglePositive - snake[0].speed.y * sinAnglePositive, snake[0].speed.x * sinAnglePositive + snake[0].speed.y * cosAnglePositive};
     }
-    else if (IsKeyDown(KEY_LEFT))
+    else if (IsKeyDown(KEY_LEFT) && !accelerating)
     {
         snake[0].speed = (Vector2){snake[0].speed.x * cosAngleNegative - snake[0].speed.y * sinAngleNegative, snake[0].speed.x * sinAngleNegative + snake[0].speed.y * cosAngleNegative};
     }
@@ -173,7 +173,7 @@ void CalcFruitCollision(void)
 {
     for (int i = 0; i < FOOD_ITEMS; i++)
     {
-        if (CheckCollisionCircles(snake[0].position, snake[0].size, fruits[i].position, fruits[i].size))
+        if (CheckCollisionCircles(snake[0].position, snake[0].size, fruits[i].position, 32 * fruits[i].scale))
         {
             if (fruits[i].tailIncreaseSize >= 0)
             {
