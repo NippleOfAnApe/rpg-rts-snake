@@ -28,8 +28,8 @@ ___
     + [x]~~bonus 10 point~~
     + [x]~~many items at once~~
     + [x]liited food (+ point, -tail)
+    + [x]boosts the speed
     + make bonus food animated
-    + boost resource collection or speed (changing screen tint)
 - [x]~~make a head differen color and on top of a body~~
 - [x]~~different color body parts~~
 - [x]make a snake accelerate

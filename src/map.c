@@ -1,11 +1,13 @@
-#include "raylib.h"
+#include "include/raylib.h"
 #include "mapObjects.h"
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
 static Texture2D bgTexture = { 0 };
-static Texture2D fgTexture = { 0 };
+static Texture2D fg1Texture = { 0 };
+static Texture2D fg2Texture = { 0 };
+static Texture2D fg3Texture = { 0 };
 static Texture2D wallTexture = { 0 };
 static Texture2D raspberryTexture = { 0 };
 static Texture2D pineapleTexture = { 0 };
@@ -16,7 +18,13 @@ Food fruits[FOOD_ITEMS] = { 0 };
 
 //Map dimensions
 const int mapWidth = 5000;
-const int mapHeight = 1000;
+const int mapHeight = 4000;
+static int area1Width = 3000;
+static int area1Height = 2000;
+static int area2Width = 3000;
+static int area2Height = 2000;
+static int area3Width = 2000;
+static int area3Height = 4000;
 int borderWidth = 40;
 int offMapSize = 110; //how many blocks to fit outside the map in the screen when near borders
 
@@ -45,7 +53,9 @@ void InitMap(void)
 
     bgTexture = LoadTexture("../resources/dirtSIZE.png");
     wallTexture = LoadTexture("../resources/stone480.png");
-    fgTexture = LoadTexture("../resources/03grass1024.png");
+    fg1Texture = LoadTexture("../resources/03grass1024.png");
+    fg2Texture = LoadTexture("../resources/01grass1024.png");
+    fg3Texture = LoadTexture("../resources/02grass1024.png");
     
     raspberryTexture = LoadTexture("../resources/raspberry64.png");
     pineapleTexture = LoadTexture("../resources/pineaple64.png");
@@ -69,16 +79,18 @@ void CalcFruitPos(void)
             {
                 fruits[i].scale = minusFruitScale;
                 fruits[i].foodTexture = &pizzaTexture;
+                fruits[i].foodType = TAILCUT;
                 fruits[i].position = (Vector2){ GetRandomValue(64, mapWidth - 64), GetRandomValue(64, (mapHeight - 64) - 2)};
                 fruits[i].points = minusFruitPoints;
-                fruits[i].tailIncreaseSize = minusFruitTailIncrease;
+                fruits[i].tailIncreaseSize = -counterTail/2;
                 fruits[i].lifetime = minusFoodLifetime;
             }
-            //Fast fruit
+            //Speed boost fruit
             else if (randomValue % 10 == 0) 
             {
                 fruits[i].scale = .5f;
                 fruits[i].foodTexture = &sushiTexture;
+                fruits[i].foodType = BOOST;
                 fruits[i].position = (Vector2){ GetRandomValue(64, mapWidth - 64), GetRandomValue(64, (mapHeight - 64) - 2)};
                 fruits[i].points = bonusFruitPoints;
                 fruits[i].tailIncreaseSize = bonusFruitTailIncrease + 5;
@@ -88,6 +100,7 @@ void CalcFruitPos(void)
             else if (randomValue % 5 == 0) 
             {
                 fruits[i].scale = bonusFruitScale;
+                fruits[i].foodType = BOOST;
                 fruits[i].foodTexture = &pineapleTexture;
                 fruits[i].position = (Vector2){ GetRandomValue(64, mapWidth - 64), GetRandomValue(64, (mapHeight - 64) - 2)};
                 fruits[i].points = bonusFruitPoints;
@@ -99,6 +112,7 @@ void CalcFruitPos(void)
             {
                 fruits[i].scale = regularFruitScale;
                 fruits[i].foodTexture = &raspberryTexture;
+                fruits[i].foodType = REGULAR;
                 fruits[i].position = (Vector2){ GetRandomValue(64, mapWidth - 64), GetRandomValue(64, (mapHeight - 64) - 2)};
                 fruits[i].points = regularFruitPoints;
                 fruits[i].tailIncreaseSize = regularFruitTailIncrease;
@@ -117,7 +131,9 @@ void DrawMap(void)
 {
     // BG and FG
     DrawTextureTiled(bgTexture, (Rectangle){0.0f, 0.0f, 1920.0f, 1280.0f}, (Rectangle){-offMapSize - borderWidth, -offMapSize - borderWidth, mapWidth + theExtra, mapHeight + theExtra}, (Vector2){0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
-    DrawTextureTiled(fgTexture, (Rectangle){0.0f, 0.0f, 1024.0f, 1024.0f}, (Rectangle){0.0f, 0.0f, mapWidth, mapHeight}, (Vector2){0.0f, 0.0f}, 0.0f, 1.6f, WHITE);
+    DrawTextureTiled(fg1Texture, (Rectangle){0.0f, 0.0f, 1024.0f, 1024.0f}, (Rectangle){0.0f, 0.0f, area1Width, area1Height}, (Vector2){0.0f, 0.0f}, 0.0f, 1.6f, WHITE);
+    DrawTextureTiled(fg2Texture, (Rectangle){0.0f, 0.0f, 1024.0f, 1024.0f}, (Rectangle){0.0f, area1Height, area2Width, area2Height}, (Vector2){0.0f, 0.0f}, 0.0f, 1.2f, WHITE);
+    DrawTextureTiled(fg3Texture, (Rectangle){0.0f, 0.0f, 1024.0f, 1024.0f}, (Rectangle){area1Width, 0.0f, area3Width, area3Height}, (Vector2){0.0f, 0.0f}, 0.0f, 1.6f, WHITE);
 
     // Borders
     DrawTextureTiled(wallTexture, (Rectangle){0.0f, 0.0f, 480.0f, 480.0f}, (Rectangle){-borderWidth, -borderWidth, mapWidth + borderWidth, borderWidth}, (Vector2){0.0f, 0.0f}, 0.0f, .5f, WHITE);
@@ -157,7 +173,7 @@ void UpdateCameraCenterInsideMap(Camera2D *camera, int screenWidth, int screenHe
 void UnloadMap(void)
 {
     UnloadTexture(bgTexture);
-    UnloadTexture(fgTexture);
+    UnloadTexture(fg1Texture);
     UnloadTexture(wallTexture);
     UnloadTexture(raspberryTexture);
     UnloadTexture(pineapleTexture);

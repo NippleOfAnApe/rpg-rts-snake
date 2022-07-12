@@ -25,8 +25,8 @@
 
 # Define required variables
 PROJECT_NAME       ?= snake_game
-RAYLIB_VERSION     ?= 3.8.0
-RAYLIB_PATH        ?= ../../raylib
+RAYLIB_VERSION     ?= 4.0.0
+RAYLIB_PATH        ?= include/
 
 # Define default options
 
@@ -44,16 +44,16 @@ PLATFORM           ?= PLATFORM_DESKTOP
 
 # Desired full path to libraylib. No relative paths.
 DESTDIR               ?= /usr/local
-RAYLIB_INSTALL_PATH   ?= $(DESTDIR)/lib
+RAYLIB_INSTALL_PATH   ?= lib
 
 # raylib header and associated source files
-RAYLIB_H_INSTALL_PATH ?= $(DESTDIR)/include
+RAYLIB_H_INSTALL_PATH ?= include
 
 # Library type used for raylib: STATIC (.a) or SHARED (.so/.dll)
 RAYLIB_LIBTYPE        ?= STATIC
 
 # Build mode for project: DEBUG or RELEASE
-BUILD_MODE            ?= RELEASE
+BUILD_MODE            ?= DEBUG
 
 # Use external GLFW library instead of rglfw module
 # TODO: Review usage on Linux. Target version of choice. Switch on -lglfw or -lglfw3

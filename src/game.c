@@ -11,8 +11,8 @@
 *
 ********************************************************************************************/
 
-#include "raylib.h"
-#include "raymath.h"
+#include "include/raylib.h"
+#include "include/raymath.h"
 #include "mapObjects.h"
 #include <stdbool.h>
 
@@ -167,10 +167,11 @@ void DrawUI(void)
         DrawText("Press P to continue", screenWidth - MeasureText("Press P to continue", 18) - 20, 20, 18, BLACK);
         DrawText("GAME PAUSED", screenWidth/2 - MeasureText("GAME PAUSED", 40)/2, screenHeight/2 - 40, 40, GRAY);
     }
-    DrawText(TextFormat("SCORE: %02i", score), 30, 30, 24, MAROON);
+    DrawText(TextFormat("SCORE: %02i", score), 30, 40, 24, MAROON);
+    DrawText(TextFormat("BOOST: %.02f", snake[0].boostCapacity), 600, 40, 24, MAROON);
     DrawText(TextFormat("TailCount: %d / %d", counterTail, SNAKE_LENGTH), 30, 400, 24, WHITE);
-    DrawText(TextFormat("snake[0].speed.x: %.02f", snakeSpeedX), 30, 60, 28, DARKPURPLE);
-    DrawText(TextFormat("snake speed y: %.02f", snakeSpeedY), 30, 100, 28, DARKPURPLE);
+    DrawText(TextFormat("snake[0].speed.x: %.02f", snake[0].speed.x), 30, 60, 28, DARKPURPLE);
+    DrawText(TextFormat("snake speed y: %.02f", snake[0].speed.y), 30, 100, 28, DARKPURPLE);
 }
 
 // Unload game variables
@@ -179,3 +180,4 @@ void UnloadGame(void)
     // TODO: Unload all dynamic loaded data (textures, sounds, models...)
     UnloadMap();
 }
+

@@ -1,5 +1,5 @@
-#include <raylib.h>
-#include <raymath.h>
+#include "include/raylib.h"
+#include "include/raymath.h"
 #include <stdbool.h>
 #include <stdlib.h>
 #include "mapObjects.h"
@@ -9,7 +9,6 @@
 //----------------------------------------------------------------------------------
 Snake snake[SNAKE_LENGTH] = { 0 };
 int score = 0;
-float snakeSpeedX = 0, snakeSpeedY = 0;
 int counterTail = 0;
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
@@ -65,6 +64,7 @@ void InitSnake(void)
     {
         snakePosition[i] = (Vector2){ 0.0f, 0.0f };
     }
+    snake[0].boostCapacity = 0.0f;
 }
 
 void SetSnakeAsCameraTarget(Camera2D *camera)
@@ -106,19 +106,27 @@ void UpdateMovement(Camera2D *camera)
     {
         snake[0].speed = (Vector2){snake[0].speed.x * cosAngleNegative - snake[0].speed.y * sinAngleNegative, snake[0].speed.x * sinAngleNegative + snake[0].speed.y * cosAngleNegative};
     }
-    snakeSpeedX = snake[0].speed.x;
-    snakeSpeedY = snake[0].speed.y;
 
     //Camera zoom
     if (IsKeyDown(KEY_Q)) camera->zoom += .01f;
     if (IsKeyDown(KEY_E)) camera->zoom -= .01f;
     
     //Acceleration
-    if (IsKeyPressed(KEY_SPACE))
+    if (IsKeyDown(KEY_SPACE))
     {
-        accelerating = true;
-        snake[0].speed = (Vector2){snake[0].speed.x * 2.0f , snake[0].speed.y * 2.0f};
+        if (snake[0].boostCapacity > 0)
+        {
+            accelerating = true;
+            snake[0].boostCapacity -= .1f;
+            snake[0].speed = (Vector2){currentSpeed.x * 2.0f, currentSpeed.y * 2.0f};
+        }else
+        {
+            snake[0].boostCapacity = 0.0f;
+            accelerating = false;
+            snake[0].speed = currentSpeed;
+        }
     }
+
     if (IsKeyReleased(KEY_SPACE))
     {
         accelerating = false;
@@ -187,6 +195,11 @@ void CalcFruitCollision(void)
                 for (short j = 0; j < abs(fruits[i].tailIncreaseSize); j++)
                 snake[counterTail - j].position = snakePosition[counterTail - 1];
 
+            }
+            
+            if (fruits[i].foodType == BOOST)
+            {
+                snake[0].boostCapacity += 40;
             }
             counterTail += fruits[i].tailIncreaseSize;
             score += fruits[i].points;

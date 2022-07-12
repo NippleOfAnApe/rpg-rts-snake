@@ -5,13 +5,16 @@
 // Some Defines
 //----------------------------------------------------------------------------------
 #define SNAKE_LENGTH   512
-#define FOOD_ITEMS      50
+#define FOOD_ITEMS      100
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
+typedef enum FoodType { REGULAR, BONUS, BOOST, TAILCUT } FoodType;
+
 typedef struct Snake {
     Vector2 position;
+    float boostCapacity;
     float size;
     Vector2 speed;
     Color color;
@@ -21,6 +24,7 @@ typedef struct Food {
     Vector2 position;
     Texture2D* foodTexture;
     float scale;
+    int foodType;
     bool active;
     int points;
     int tailIncreaseSize;
@@ -32,7 +36,6 @@ typedef struct Food {
 //----------------------------------------------------------------------------------
 extern int score;
 extern int counterTail;
-extern float snakeSpeedX, snakeSpeedY;
 
 extern Food fruits[FOOD_ITEMS];
 extern Snake snake[SNAKE_LENGTH];
