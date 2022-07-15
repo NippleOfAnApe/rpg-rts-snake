@@ -10,15 +10,17 @@
 Snake snake[SNAKE_LENGTH] = { 0 };
 int score = 0;
 int counterTail = 0;
+
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
 //----------------------------------------------------------------------------------
 static Vector2 snakePosition[SNAKE_LENGTH] = { 0 };
-static Color SnakeColorPatern1[] = { ORANGE, SKYBLUE, MAGENTA, LIME };
+static Color SnakeColorPatern1[] = { ORANGE, SKYBLUE, MAGENTA, LIME, YELLOW };
 //Aceleration
 static Vector2 currentSpeed = { 0 };
 static bool accelerating;
 static float snakeSizeRadius = 20;
+static short snakeColorFrequency = 8;   //how many circles are of the same color
 static int snakeSpeed = 3;
 static int tailStartSize = 5;
 
@@ -55,15 +57,11 @@ void InitSnake(void)
         snake[i].position = (Vector2){ 400.0f, 400.0f };
         snake[i].size = snakeSizeRadius;
         snake[i].speed = (Vector2){ snakeSpeed, snakeSpeed };
-
-        //5 and 4 are hardcoded 5 - number of circles; 4 - number of elements in array
-        snake[i].color = SnakeColorPatern1[i / 5 % 4];     //every 5 circles are different colors
-    }
-
-    for (int i = 0; i < SNAKE_LENGTH; i++)
-    {
+        snake[i].color = SnakeColorPatern1[i / snakeColorFrequency % (sizeof(SnakeColorPatern1) / sizeof(Color))];     //every 5 circles are different colors
+        
         snakePosition[i] = (Vector2){ 0.0f, 0.0f };
     }
+
     snake[0].boostCapacity = 0.0f;
 }
 
@@ -143,10 +141,10 @@ bool CalcWallCollision()
 
 bool CalcSelfCollision(void)        //TODO work on better collision recognition
 {
-    for (int i = 1; i < counterTail; i++)
-    {
-        return ((snake[0].position.x == snake[i].position.x) && (snake[0].position.y == snake[i].position.y));
-    }
+    // for (int i = 1; i < counterTail; i++)
+    // {
+    //     return ((snake[0].position.x == snake[i].position.x) && (snake[0].position.y == snake[i].position.y));
+    // }
     return false;
 }
 
@@ -174,7 +172,7 @@ bool FruitIsOnSnake(Food fruit)
 {
     for (int i = 0; i < counterTail; i++)   //To prevent a fruit from spawning on top of a snake
     {
-        return ((fruit.position.x == snake[i].position.x) && (fruit.position.y == snake[i].position.y));
+        return CheckCollisionCircles(fruit.position, fruit.scale, snake[i].position, snake[i].size);
     }
     return false;
 }
@@ -185,7 +183,7 @@ void CalcFruitCollision(void)
     {
         if (CheckCollisionCircles(snake[0].position, snake[0].size, fruits[i].position, 32 * fruits[i].scale))
         {
-            if (fruits[i].tailIncreaseSize >= 0)
+            if (fruits[i].foodType != TAILCUT)
             {
                 for (short j = 0; j < fruits[i].tailIncreaseSize; j++)
                 snake[counterTail + j].position = snakePosition[counterTail - 1];

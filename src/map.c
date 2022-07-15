@@ -37,7 +37,6 @@ static int regularFruitPoints = 2;
 static float minusFruitScale = .8f;
 static float bonusFruitScale = 1.2f;
 static float regularFruitScale = .6f;
-static int minusFruitTailIncrease = -5;
 static int bonusFruitTailIncrease = 5;
 static int regularFruitTailIncrease = 1;
 static int theExtra = 0;    // extra space needed for drawing bg and fg
