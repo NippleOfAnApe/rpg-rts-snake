@@ -168,10 +168,10 @@ void DrawUI(void)
         DrawText("GAME PAUSED", screenWidth/2 - MeasureText("GAME PAUSED", 40)/2, screenHeight/2 - 40, 40, GRAY);
     }
     DrawText(TextFormat("SCORE: %02i", score), 30, 40, 24, MAROON);
-    DrawText(TextFormat("BOOST: %.02f", snake[0].boostCapacity), 600, 40, 24, MAROON);
+    DrawText(TextFormat("BOOST: %.02f", snake->boostCapacity), 600, 40, 24, MAROON);
     DrawText(TextFormat("TailCount: %d / %d", counterTail, SNAKE_LENGTH), 30, 400, 24, WHITE);
-    DrawText(TextFormat("snake[0].speed.x: %.02f", snake[0].speed.x), 30, 60, 28, DARKPURPLE);
-    DrawText(TextFormat("snake speed y: %.02f", snake[0].speed.y), 30, 100, 28, DARKPURPLE);
+    DrawText(TextFormat("speed.x: %d", snake->tileXPos), 30, 60, 28, DARKPURPLE);
+    DrawText(TextFormat("speed.y: %d", snake->tileYPos), 30, 100, 28, DARKPURPLE);
 }
 
 // Unload game variables

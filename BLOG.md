@@ -19,13 +19,23 @@ ___
 + No cells
 + Different color body parts
 + Render from tail to head e.g. head will be on top
-## Patch 2
+## Patch 3
 ![GIF](resources/boost.gif)
 ![GIF](resources/tailCut.gif)
 
 + Sushi collectible that boosts a snake
 + Pizza collectible that cuts a tail in half
 + Move a snake with right/left keys. Space to boost
+
+## Patch 4
+![GIF](resources/snake4.gif)
+
++ Map is a scaled down Europe (1 tile ~ 8km)
++ Snake grow in size (not only in length), turn angle decreases with size; boost speed increases
++ Only tiles that are close to the player are rendred
++ The information about tiles is stored as unsigned chars
++ Minor optimization fixes
+
 ---
 ### **TODO**
 - [x]~~image bg outside the map~~
@@ -40,6 +50,7 @@ ___
 - [x]~~make a head differen color and on top of a body~~
 - [x]~~different color body parts~~
 - [x]~~make a snake accelerate~~
+- [x]~~maps is split into 3 zones~~
 - a dropoff location where you can cut your snake but get bonus points
 - add sfx & music
 - make walls and shoot points to burst them or enemies
@@ -54,8 +65,12 @@ ___
 - [x]~~circles instead of squares~~
 - [x]~~move snake with a mouse pointer~~
 - [x]~~control moves with left/right, movement is constant~~
-- OR ~~limit the turn angle~~
+- [x] ~~OR limit the turn angle~~
 - custom mouse pointer
 - ~~make snake a dynamic array insted of static~~
 - health system: if you are continiously colliding with a terrain or enemies, you start to shrink back and loose your health score and body mass, but not actual score. (more global damages will be presented later)
 - if you spin in a circle, you gain the acceleration, after exiting it you gain a boost to your speed that decays
+- [x] ~~Render tiles that are close to the player~~
+- [x] ~~Increse radius and decrease turn angle with counterTail~~
+- [x] ~~Make a map tiled (Part 1)~~
+- Make a minimap
